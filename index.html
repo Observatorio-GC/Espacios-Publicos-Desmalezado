@@ -47,6 +47,7 @@
         <script src="data/ZonaDesmalezamiento1_7.js"></script>
         <script src="data/ZonasRealizadasMenosdeunmes_8.js"></script>
         <script src="data/ZonasRealizadasMasdeunmes_9.js"></script>
+        <script src="data/ZonasProgramadas_10.js"></script>
         <script>
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:1
@@ -510,7 +511,69 @@
         });
         bounds_group.addLayer(layer_ZonasRealizadasMasdeunmes_9);
         map.addLayer(layer_ZonasRealizadasMasdeunmes_9);
+        function pop_ZonasProgramadas_10(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Nombre</strong><br />' + (feature.properties['Nombre'] !== null ? autolinker.link(String(feature.properties['Nombre']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Cronograma</strong><br />' + (feature.properties['Cronograma'] !== null ? autolinker.link(String(feature.properties['Cronograma']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        var pattern_ZonasProgramadas_10_0 = new L.StripePattern({
+            weight: 0.3,
+            spaceWeight: 2.0,
+            color: '#ec6900',
+            opacity: 1.0,
+            spaceOpacity: 0,
+            angle: 315
+        });
+        pattern_ZonasProgramadas_10_0.addTo(map);
+        function style_ZonasProgramadas_10_0() {
+            return {
+                pane: 'pane_ZonasProgramadas_10',
+                stroke: false,
+                fillOpacity: 1,
+                fillPattern: pattern_ZonasProgramadas_10_0,
+                interactive: true,
+            }
+        }
+        function style_ZonasProgramadas_10_1() {
+            return {
+                pane: 'pane_ZonasProgramadas_10',
+                opacity: 1,
+                color: 'rgba(236,105,0,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_ZonasProgramadas_10');
+        map.getPane('pane_ZonasProgramadas_10').style.zIndex = 410;
+        map.getPane('pane_ZonasProgramadas_10').style['mix-blend-mode'] = 'normal';
+        var layer_ZonasProgramadas_10 = new L.geoJson.multiStyle(json_ZonasProgramadas_10, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_ZonasProgramadas_10',
+            layerName: 'layer_ZonasProgramadas_10',
+            pane: 'pane_ZonasProgramadas_10',
+            onEachFeature: pop_ZonasProgramadas_10,
+            styles: [style_ZonasProgramadas_10_0,style_ZonasProgramadas_10_1,]
+        });
+        bounds_group.addLayer(layer_ZonasProgramadas_10);
+        map.addLayer(layer_ZonasProgramadas_10);
         var overlaysTree = [
+            {label: '<img src="legend/ZonasProgramadas_10.png" /> Zonas Programadas', layer: layer_ZonasProgramadas_10},
             {label: '<img src="legend/ZonasRealizadasMasdeunmes_9.png" /> Zonas Realizadas (Mas de un mes)', layer: layer_ZonasRealizadasMasdeunmes_9},
             {label: '<img src="legend/ZonasRealizadasMenosdeunmes_8.png" /> Zonas Realizadas (Menos de un mes)', layer: layer_ZonasRealizadasMenosdeunmes_8},
             {label: '<img src="legend/ZonaDesmalezamiento1_7.png" /> Zona Desmalezamiento 1', layer: layer_ZonaDesmalezamiento1_7},
