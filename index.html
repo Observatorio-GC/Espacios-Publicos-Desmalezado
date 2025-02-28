@@ -19,9 +19,9 @@
             margin: 0;
         }
         </style>
-       <title>Espacios Públicos - Desmalezado</title>
-       <!-- Icono -->
-       <link rel="icon" href="./images/favicon1.ico">
+        <title>Espacios Públicos - Desmalezado</title>
+        <!-- Icono -->
+        <link rel="icon" href="./images/favicon1.ico">
     </head>
     <body>
         <div id="map">
@@ -49,6 +49,7 @@
         <script src="data/ZonasRealizadasMasdeunmes_9.js"></script>
         <script src="data/ZonasProgramadas_10.js"></script>
         <script src="data/NotasyReclamosDesmalezado_11.js"></script>
+        <script src="data/NotasyReclamosRealizados_12.js"></script>
         <script>
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:1
@@ -204,6 +205,7 @@
                 }
             }
 
+
         function style_ZonaDesmalezamiento5_3_0() {
             return {
                 pane: 'pane_ZonaDesmalezamiento5_3',
@@ -243,7 +245,6 @@
                 }
             }
 
-
         function style_ZonaDesmalezamiento4_4_0() {
             return {
                 pane: 'pane_ZonaDesmalezamiento4_4',
@@ -282,7 +283,6 @@
                     }
                 }
             }
-
 
         function style_ZonaDesmalezamiento3_5_0() {
             return {
@@ -408,7 +408,7 @@
         }
 
         var pattern_ZonasRealizadasMenosdeunmes_8_0 = new L.StripePattern({
-            weight: 0.3,
+            weight: 1.2,
             spaceWeight: 2.0,
             color: '#0bba06',
             opacity: 1.0,
@@ -469,7 +469,7 @@
         }
 
         var pattern_ZonasRealizadasMasdeunmes_9_0 = new L.StripePattern({
-            weight: 0.3,
+            weight: 1.2,
             spaceWeight: 2.0,
             color: '#285b27',
             opacity: 1.0,
@@ -530,7 +530,7 @@
         }
 
         var pattern_ZonasProgramadas_10_0 = new L.StripePattern({
-            weight: 0.3,
+            weight: 1.2,
             spaceWeight: 2.0,
             color: '#ec6900',
             opacity: 1.0,
@@ -626,7 +626,57 @@
         });
         bounds_group.addLayer(layer_NotasyReclamosDesmalezado_11);
         map.addLayer(layer_NotasyReclamosDesmalezado_11);
+        function pop_NotasyReclamosRealizados_12(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Nombre</strong><br />' + (feature.properties['Nombre'] !== null ? autolinker.link(String(feature.properties['Nombre']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_NotasyReclamosRealizados_12_0() {
+            return {
+                pane: 'pane_NotasyReclamosRealizados_12',
+                radius: 5.2,
+                opacity: 1,
+                color: 'rgba(23,29,22,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(84,176,74,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_NotasyReclamosRealizados_12');
+        map.getPane('pane_NotasyReclamosRealizados_12').style.zIndex = 412;
+        map.getPane('pane_NotasyReclamosRealizados_12').style['mix-blend-mode'] = 'normal';
+        var layer_NotasyReclamosRealizados_12 = new L.geoJson(json_NotasyReclamosRealizados_12, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_NotasyReclamosRealizados_12',
+            layerName: 'layer_NotasyReclamosRealizados_12',
+            pane: 'pane_NotasyReclamosRealizados_12',
+            onEachFeature: pop_NotasyReclamosRealizados_12,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_NotasyReclamosRealizados_12_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_NotasyReclamosRealizados_12);
+        map.addLayer(layer_NotasyReclamosRealizados_12);
         var overlaysTree = [
+            {label: '<img src="legend/NotasyReclamosRealizados_12.png" /> Notas y Reclamos Realizados', layer: layer_NotasyReclamosRealizados_12},
             {label: '<img src="legend/NotasyReclamosDesmalezado_11.png" /> Notas y Reclamos Desmalezado', layer: layer_NotasyReclamosDesmalezado_11},
             {label: '<img src="legend/ZonasProgramadas_10.png" /> Zonas Programadas', layer: layer_ZonasProgramadas_10},
             {label: '<img src="legend/ZonasRealizadasMasdeunmes_9.png" /> Zonas Realizadas (Mas de un mes)', layer: layer_ZonasRealizadasMasdeunmes_9},
