@@ -353,14 +353,20 @@
         bounds_group.addLayer(layer_ZonaDesmalezamiento1_6);
         map.addLayer(layer_ZonaDesmalezamiento1_6);
         function pop_BulevarCanteroAccesoSurSantaElena_7(feature, layer) {
-            if (feature.properties && feature.properties.Nombre) {
-                if (feature.properties.Nombre) {
-                            layer.bindPopup("<strong>" + feature.properties.Nombre  + "</strong><br" + feature.properties.Encargado + "</strong><br/>");
-                        } else{
-                               layer.bindPopup("<strong>" + feature.properties.Nombre + "</strong>");
-                    }  
-                }
-            }
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Nombre</strong><br />' + (feature.properties['Nombre'] !== null ? autolinker.link(String(feature.properties['Nombre']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Encargado</strong><br />' + (feature.properties['Encargado'] !== null ? autolinker.link(String(feature.properties['Encargado']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
 
         function style_BulevarCanteroAccesoSurSantaElena_7_0() {
             return {
