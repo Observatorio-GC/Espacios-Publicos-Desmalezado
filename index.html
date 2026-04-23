@@ -20,7 +20,7 @@
             margin: 0;
         }
         </style>
-         <title>Espacios Públicos - Desmalezado</title>
+        <title>Espacios Públicos - Desmalezado</title>
          <!-- Icono -->
          <link rel="icon" href="./images/favicon1.ico">
     </head>
@@ -54,7 +54,7 @@
         <script>
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:1
-        }).fitBounds([[-32.956804665658304,-68.89116975242507],[-32.90729403546789,-68.78825073794664]]);
+        }).fitBounds([[-32.96124756439825,-68.88848304620001],[-32.90696009552015,-68.7912658852452]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -72,20 +72,53 @@
          }
          return tempDiv.innerHTML;
         }
-        // add class to format popup if it contains media
-		function addClassToPopupIfMedia(content, popup) {
-			var tempDiv = document.createElement('div');
-			tempDiv.innerHTML = content;
-			if (tempDiv.querySelector('td img')) {
-				popup._contentNode.classList.add('media');
-					// Delay to force the redraw
-					setTimeout(function() {
-						popup.update();
-					}, 10);
-			} else {
-				popup._contentNode.classList.remove('media');
-			}
-		}
+        // modify popup if contains media
+        function addClassToPopupIfMedia(content, popup) {
+            var tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+            var imgTd = tempDiv.querySelector('td img');
+            if (imgTd) {
+                var src = imgTd.getAttribute('src');
+                if (/\.(jpg|jpeg|png|gif|bmp|webp|avif)$/i.test(src)) {
+                    popup._contentNode.classList.add('media');
+                    setTimeout(function() {
+                        popup.update();
+                    }, 10);
+                } else if (/\.(mp3|wav|ogg|aac)$/i.test(src)) {
+                    var audio = document.createElement('audio');
+                    audio.controls = true;
+                    audio.src = src;
+                    imgTd.parentNode.replaceChild(audio, imgTd);
+                    popup._contentNode.classList.add('media');
+                    setTimeout(function() {
+                        popup.setContent(tempDiv.innerHTML);
+                        popup.update();
+                    }, 10);
+                } else if (/\.(mp4|webm|ogg|mov)$/i.test(src)) {
+                    var video = document.createElement('video');
+                    video.controls = true;
+                    video.src = src;
+                    video.style.width = "400px";
+                    video.style.height = "300px";
+                    video.style.maxHeight = "60vh";
+                    video.style.maxWidth = "60vw";
+                    imgTd.parentNode.replaceChild(video, imgTd);
+                    popup._contentNode.classList.add('media');
+                    // Aggiorna il popup quando il video carica i metadati
+                    video.addEventListener('loadedmetadata', function() {
+                        popup.update();
+                    });
+                    setTimeout(function() {
+                        popup.setContent(tempDiv.innerHTML);
+                        popup.update();
+                    }, 10);
+                } else {
+                    popup._contentNode.classList.remove('media');
+                }
+            } else {
+                popup._contentNode.classList.remove('media');
+            }
+        }
         var zoomControl = L.control.zoom({
             position: 'topleft'
         }).addTo(map);
@@ -102,19 +135,19 @@
         var bounds_group = new L.featureGroup([]);
         function setBounds() {
         }
-        map.createPane('pane_Argenmap_0');
-        map.getPane('pane_Argenmap_0').style.zIndex = 400;
-        var layer_Argenmap_0 = L.tileLayer('https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/capabaseargenmap@EPSG:3857@png/{z}/{x}/{-y}.png', {
-            pane: 'pane_Argenmap_0',
+        map.createPane('pane_OSMStandard_0');
+        map.getPane('pane_OSMStandard_0').style.zIndex = 400;
+        var layer_OSMStandard_0 = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            pane: 'pane_OSMStandard_0',
             opacity: 1.0,
-            attribution: '',
+            attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors, CC-BY-SA</a>',
             minZoom: 1,
             maxZoom: 28,
             minNativeZoom: 0,
-            maxNativeZoom: 18
+            maxNativeZoom: 19
         });
-        layer_Argenmap_0;
-        map.addLayer(layer_Argenmap_0);
+        layer_OSMStandard_0;
+        map.addLayer(layer_OSMStandard_0);
         function pop_Zona7_1(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
@@ -193,7 +226,7 @@
                 weight: 3.0, 
                 fill: true,
                 fillOpacity: 0.3,
-                fillColor:  'rgba(8,166,0,1.0)',
+                fillColor: 'rgba(8,166,0,1.0)',
                 interactive: true,
             }
         }
@@ -697,7 +730,7 @@
             {label: '<img src="legend/Zona5_3.png" /> Zona 5', layer: layer_Zona5_3},
             {label: '<img src="legend/Zona6_2.png" /> Zona 6', layer: layer_Zona6_2},
             {label: '<img src="legend/Zona7_1.png" /> Zona 7', layer: layer_Zona7_1},
-            {label: "Argenmap", layer: layer_Argenmap_0, radioGroup: 'bm' },]
+            {label: "OSM Standard", layer: layer_OSMStandard_0, radioGroup: 'bm' },]
         var lay = L.control.layers.tree(null, overlaysTree,{
             //namedToggle: true,
             //selectorBack: false,
@@ -715,7 +748,7 @@
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['Nombre'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial black\', sans-serif;">' + layer.feature.properties['Nombre']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Zona7_1'});
+            layer.bindTooltip((layer.feature.properties['Nombre'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['Nombre']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Zona7_1'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
@@ -728,7 +761,7 @@
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['Nombre'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial black\', sans-serif;">' + layer.feature.properties['Nombre']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Zona6_2'});
+            layer.bindTooltip((layer.feature.properties['Nombre'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['Nombre']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Zona6_2'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
@@ -741,7 +774,7 @@
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['Nombre'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial black\', sans-serif;">' + layer.feature.properties['Nombre']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Zona5_3'});
+            layer.bindTooltip((layer.feature.properties['Nombre'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['Nombre']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Zona5_3'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
@@ -754,7 +787,7 @@
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['Nombre'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial black\', sans-serif;">' + layer.feature.properties['Nombre']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Zona4_4'});
+            layer.bindTooltip((layer.feature.properties['Nombre'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['Nombre']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Zona4_4'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
@@ -767,7 +800,7 @@
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['Nombre'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial black\', sans-serif;">' + layer.feature.properties['Nombre']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Zona3_5'});
+            layer.bindTooltip((layer.feature.properties['Nombre'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['Nombre']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Zona3_5'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
@@ -780,7 +813,7 @@
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['Nombre'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial black\', sans-serif;">' + layer.feature.properties['Nombre']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Zona2_6'});
+            layer.bindTooltip((layer.feature.properties['Nombre'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['Nombre']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Zona2_6'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
@@ -793,7 +826,7 @@
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['Nombre'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial black\', sans-serif;">' + layer.feature.properties['Nombre']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Zona1_7'});
+            layer.bindTooltip((layer.feature.properties['Nombre'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['Nombre']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Zona1_7'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
@@ -810,6 +843,6 @@
         map.on("layerremove", function(){
             resetLabels([layer_Zona7_1,layer_Zona6_2,layer_Zona5_3,layer_Zona4_4,layer_Zona3_5,layer_Zona2_6,layer_Zona1_7]);
         });
-        </script>
+        </script>        
     </body>
 </html>
