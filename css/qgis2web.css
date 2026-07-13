@@ -194,10 +194,15 @@
             justify-content: center;
             align-items: center;
         }
+        .leaflet-marker-icon{
+            white-space: nowrap;
+        }
+        
         .leaflet-control-layers-expanded .leaflet-control-layers-toggle {
             display: none;
         }
         .css_Zona7_1 {
+            pointer-events: none!important;
             text-shadow: -2px -2px 0 #fafafa,
                 -2px -1px 0 #fafafa,
                 -2px 0px 0 #fafafa,
@@ -224,6 +229,7 @@
                 2px 2px 0 #fafafa;
         }
         .css_Zona6_2 {
+            pointer-events: none!important;
             text-shadow: -2px -2px 0 #fafafa,
                 -2px -1px 0 #fafafa,
                 -2px 0px 0 #fafafa,
@@ -250,6 +256,7 @@
                 2px 2px 0 #fafafa;
         }
         .css_Zona5_3 {
+            pointer-events: none!important;
             text-shadow: -2px -2px 0 #fafafa,
                 -2px -1px 0 #fafafa,
                 -2px 0px 0 #fafafa,
@@ -276,6 +283,7 @@
                 2px 2px 0 #fafafa;
         }
         .css_Zona4_4 {
+            pointer-events: none!important;
             text-shadow: -2px -2px 0 #fafafa,
                 -2px -1px 0 #fafafa,
                 -2px 0px 0 #fafafa,
@@ -302,6 +310,7 @@
                 2px 2px 0 #fafafa;
         }
         .css_Zona3_5 {
+            pointer-events: none!important;
             text-shadow: -2px -2px 0 #fafafa,
                 -2px -1px 0 #fafafa,
                 -2px 0px 0 #fafafa,
@@ -328,6 +337,7 @@
                 2px 2px 0 #fafafa;
         }
         .css_Zona2_6 {
+            pointer-events: none!important;
             text-shadow: -2px -2px 0 #fafafa,
                 -2px -1px 0 #fafafa,
                 -2px 0px 0 #fafafa,
@@ -354,6 +364,7 @@
                 2px 2px 0 #fafafa;
         }
         .css_Zona1_7 {
+            pointer-events: none!important;
             text-shadow: -2px -2px 0 #fafafa,
                 -2px -1px 0 #fafafa,
                 -2px 0px 0 #fafafa,
